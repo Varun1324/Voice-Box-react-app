@@ -9,19 +9,37 @@ import { FaRegCircleStop } from "react-icons/fa6";
 const HomePage = () => {
     const [output, setOutput] = useState([]);
 
+    const startRecording = async () => {
+        try {
+            await axios.post('https://python-backend-server.vercel.app/start');
+            console.log("Recording started");
+        } catch (error) {
+            console.error('Error starting recording:', error);
+        }
+    };
+
+    const stopRecording = async () => {
+        try {
+            await axios.post('https://python-backend-server.vercel.app/stop');
+            console.log("Recording stopped");
+        } catch (error) {
+            console.error('Error stopping recording:', error);
+        }
+    };
+
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get('https://python-backend-server.vercel.app/'); // Corrected URL
+                const response = await axios.get('https://python-backend-server.vercel.app/');
                 setOutput(response.data);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
         };
-        const changeData = setInterval(fetchData, 20000); // Polling every 10 seconds
+        const changeData = setInterval(fetchData, 20000); // Polling every 20 seconds
         fetchData();
 
-        return () => clearInterval(changeData); // Clean up interval on unmount
+        return () => clearInterval(changeData);
     }, []);
 
     return (
@@ -36,9 +54,9 @@ const HomePage = () => {
                     )}
                 </div>
                 <div className="items">
-                    <RxCrossCircled className='stop-cancel' />
-                    <button className='record'><img src={mic} alt="Mic" className='mic' /></button>
-                    <FaRegCircleStop className='stop-cancel' />
+                    <RxCrossCircled className='stop-cancel' onClick={stopRecording} />
+                    <button className='record' onClick={startRecording}><img src={mic} alt="Mic" className='mic' /></button>
+                    <FaRegCircleStop className='stop-cancel' onClick={stopRecording} />
                 </div>
             </div>
         </React.Fragment>
